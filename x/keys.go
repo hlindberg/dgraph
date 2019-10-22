@@ -168,7 +168,7 @@ func ReverseKey(attr string, uid uint64) []byte {
 // next len(term) bytes: value of term
 // next eight bytes (optional): if the key corresponds to a split list, the startUid of
 //   the split stored in this key.
-func IndexKey(attr, term string) []byte {
+func IndexKey(attr, term string, lang string) []byte {
 	prefixLen := 1 + 2 + len(attr)
 	totalLen := prefixLen + 1 + 1 + len(term)
 	buf := generateKey(DefaultPrefix, attr, totalLen)
