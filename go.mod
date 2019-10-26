@@ -1,6 +1,6 @@
 module github.com/dgraph-io/dgraph
 
-go 1.13
+go 1.12
 
 require (
 	contrib.go.opencensus.io/exporter/jaeger v0.1.0

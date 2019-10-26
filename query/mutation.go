@@ -119,11 +119,11 @@ func AssignUids(ctx context.Context, gmuList []*gql.Mutation) (map[string]uint64
 		for _, nq := range gmu.Set {
 			// We dont want to assign uids to these.
 			if nq.Subject == x.Star && nq.ObjectValue.GetDefaultVal() == x.Star {
-				return newUids, errors.New("Predicate deletion should be called via alter")
+				return newUids, errors.New("predicate deletion should be called via alter")
 			}
 
 			if len(nq.Subject) == 0 {
-				return nil, errors.Errorf("Subject must not be empty for nquad: %+v", nq)
+				return nil, errors.Errorf("subject must not be empty for nquad: %+v", nq)
 			}
 			var uid uint64
 			if strings.HasPrefix(nq.Subject, "_:") {

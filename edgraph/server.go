@@ -684,7 +684,7 @@ func processQuery(ctx context.Context, qc *queryContext) (*api.Response, error) 
 	if qc.req.BestEffort {
 		// Sanity: check that request is read-only too.
 		if !qc.req.ReadOnly {
-			return nil, errors.Errorf("A best effort query must be read-only.")
+			return nil, errors.Errorf("best effort query must be read-only")
 		}
 
 		if qc.req.StartTs == 0 {
@@ -711,7 +711,6 @@ func processQuery(ctx context.Context, qc *queryContext) (*api.Response, error) 
 		return nil, errors.Wrap(err, "")
 	}
 
-	var js []byte
 	if len(er.SchemaNode) > 0 || len(er.Types) > 0 {
 		sort.Slice(er.SchemaNode, func(i, j int) bool {
 			return er.SchemaNode[i].Predicate < er.SchemaNode[j].Predicate
@@ -727,15 +726,14 @@ func processQuery(ctx context.Context, qc *queryContext) (*api.Response, error) 
 		if len(er.Types) > 0 {
 			respMap["types"] = formatTypes(er.Types)
 		}
-		js, err = json.Marshal(respMap)
+		resp.Json, err = json.Marshal(respMap)
 	} else {
-		js, err = query.ToJson(qc.latency, er.Subgraphs)
+		resp.Json, err = query.ToJson(qc.latency, er.Subgraphs)
 	}
 	if err != nil {
 		return nil, err
 	}
-	resp.Json = js
-	qc.span.Annotatef(nil, "Response = %s", js)
+	qc.span.Annotatef(nil, "Response = %s", resp.Json)
 
 	// varToUID contains a map of variable name to the uids corresponding to it.
 	// It is used later for constructing set and delete mutations by replacing
@@ -979,7 +977,7 @@ func (s *Server) doMutate(ctx context.Context, qc *queryContext, resp *api.Respo
 	}
 
 	if !isMutationAllowed(ctx) {
-		return errors.Errorf("No mutations allowed.")
+		return errors.Errorf("mutations not allowed")
 	}
 
 	if err := x.HealthCheck(); err != nil {
@@ -998,7 +996,7 @@ func (s *Server) doMutate(ctx context.Context, qc *queryContext, resp *api.Respo
 				for _, uid := range uids {
 					u, err := strconv.ParseUint(uid, 10, 64)
 					if err != nil {
-						return errors.Errorf("Couldn't parse uid: [%v] as base 10 uint64", uid)
+						return errors.Errorf("couldn't parse uid: [%v] as base 10 uint64", uid)
 					}
 					huid := fmt.Sprintf("%#x", u)
 					hexUids = append(hexUids, huid)
